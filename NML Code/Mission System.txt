@@ -1,4 +1,4 @@
-&cmd`MissionList #2082=$+mission/list:@pemit %#=[u(#2082/Dat`MissionList)]
+&cmd`MissionList #2082=$+mission/list:@break [hasslabs(%#, staff-Plot)]={@pemit %#=[u(func`LandOfFireList)]%r%r[u(func`KirigakureList)]%r%r[u(func`IndependentList)]}; @pemit %#=[u(#2082/Dat`MissionList)]
 
 &cmd`MissionCreate #2082=$+Mission/create New:@pemit %#=[prompt(Game)] You have begun to create a mission. ;@set #2082=Dat`MissionCreation`%#:|||||
 
@@ -113,13 +113,13 @@ Medical: Survival, Diagnose, Triage, Surgery
 
 FUNC`SECONDARYOBJECTIVES #2082=[Switchall(%0,Grab(Athletics|Tree Walking|Water Walking,%0,|),Travel|,grab(Pursuit|Tracking|Sensor,%0,|),Seek|,grab(Labor|Command|Teamwork,%0,|),Work|,grab(Survival|Endurance|Detection,%0,|),Wilderness|,grab(Diplomacy|Espionage|Leadership,%0,|),Negotiation|,grab(Knowledge|Identification|Seal Manip,%0*,|),Lore|,grab(Performance|Reflexes|Disguise|Henge,%0,|),Sneak|,grab(Survival|Diagnose|Triage|Surgery,%0,|),Medical)]
 
-&Dat`MissionList #2082=[switch(get(%#/Card`Affiliation),Land of Fire,[u(#2082/Func`LandofFireList)],Kirigakure,[u(#2082/Func`KirigalureList)],Independent,[u(#2082/Func`IndependentList)])]
+&Dat`MissionList #2082=[switch(get(%#/Card`Affiliation),Land of Fire,[u(#2082/Func`LandofFireList)],Kirigakure,[u(#2082/Func`KirigakureList)],Independent,[u(#2082/Func`IndependentList)])]
 
-&func`LandofFireList #2082=%r%t%t%t%t [ansi(hr,Land Of Fire)] Missions %r%r[iter([u(#2082/Dat`LandofFireMissions)],%b#@. [extractword(%i0,1,1,:)],|,%r)]%r
+&FUNC`KIRIGAKURELIST #2082=[printf($^78:[ansi(hb, -=)]:s, < [ansi(hc, Kiri, hw, %bMissions)] >)]%r[iter([v(dat`KirigakureMissions)], [printf($4-s $72-s, #@.,[elements(%i0, 1, :)])], |, %r)]%r[printf($^78:[ansi(hb, -=)]:s, < End Mission List>)]
 
-&func`KirigakureList #2082=%r%t%t%t%t [ansi(hc,Kiri)] Missions %r%r[iter([u(#2082/Dat`KirigakureMissions)],%b#@. [extractword(%i0,1,1,:)],|,%r)]%r
+&FUNC`INDEPENDENTLIST #2082=[printf($^78:[ansi(hb, -=)]:s, < [ansi(hx, Independent, hw, %bMissions)] >)]%r[iter([v(dat`IndependentMissions)], [printf($4-s $72-s, #@.,[elements(%i0, 1, :)])], |, %r)]%r[printf($^78:[ansi(hb, -=)]:s, < End Mission List>)]
 
-&func`IndependentList #2082=%r%t%t%t%t [ansi(hx,Independent)] Missions %r%r[iter([u(#2082/Dat`IndependentMissions)],%b#@. [extractword(%i0,1,1,:)],|,%r)]%r
+&FUNC`LANDOFFIRELIST #2082=[printf($^78:[ansi(hb, -=)]:s, < [ansi(hr, Land of Fire, hw, %bMissions)] >)]%r[iter([v(dat`LandOfFireMissions)], [printf($4-s $72-s, #@.,[elements(%i0, 1, :)])], |, %r)]%r[printf($^78:[ansi(hb, -=)]:s, < End Mission List>)]
 
 
 &func`MissionCap #2082=[switch(%0,D,80,C,100,B,140,A,200,S,250)]
