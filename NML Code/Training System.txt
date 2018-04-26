@@ -53,5 +53,40 @@ shinobirankcalc
 
 &FUNC`REFRESH #245=[set(%#,Dat`Vitality`Total:[u(#245/func`vitalitycalc)])][set(%#,Dat`Vitality`Max:[u(#245/func`vitalitycalc)])][set(%#,Dat`PhysicalEnergy`Total:[u(#245/func`physicalenergycalc)])][set(%#,Dat`PhysicalEnergy`Max:[u(#245/func`physicalenergycalc)])][set(%#,Dat`PhysicalEnergy`Current:[u(#245/func`physicalenergycalc)])][set(%#,Dat`SpiritualEnergy`Total:[u(#245/func`Spiritualenergycalc)])] [set(%#,Dat`SpiritualEnergy`Max:[u(#245/func`Spiritualenergycalc)])][set(%#,Dat`SpiritualEnergy`Current:[u(#245/func`Spiritualenergycalc)])][set(%#,Dat`Stamina`Total:[u(#245/func`StaminaTotalcalc)])][set(%#,Dat`Stamina`Max:[u(#245/func`StaminaTotalcalc)])][set(%#,Dat`Chakra`Total:[u(#245/func`chakraTotalcalc)])][set(%#,Dat`Chakra`Max:[u(#245/func`chakraTotalcalc)])]
 
+________________________________________________________________________________________
+
+
+New Training System
+
+* Based on each category of training and the individual things being trained.
+* No longer earns XP, but instead progress towards increasing what is being trained.
+* XP and KP can still be utilized with normal purchasing methods.
+* Dynamic amounts of training based on the current overall progress in what is being trained, the amount of similar things within the category, complexity, Usage/Proficienation for Jutsu (maybe in the future)?
+
+
+Categories: Stats, Jutsu, RP Skills
+Sub Categories: Specified Stat, Specified Jutsu, Specified RP Skill
+
+Inspiration: static 3x multiplier, random chance of occuring. 
+&FUNC`EndCALC #2082=[add([if(match(get(%#/Dat`Merits),Vigorous,|),-.01)],[if(match(get(%#/Dat`Merits),High Chakra,|),-.01)],[if(match(get(%#/Dat`Merits),Tough,|),-.01)],[if(match(get(%#/Dat`Flaws),Enervated,|),.01)],[if(match(get(%#/Dat`Flaws),Low Chakra,|),.01)],[if(match(get(%#/Dat`Flaws),Frail,|),.01)])]
+&FUNC`QualityCALC #2082=[add([if(match(get(%#/Dat`Merits),Gifted,|),-3)],[if(match(get(%#/Dat`Merits),Perfected Chakra Molding,|),-3)],[if(match(get(%#/Dat`Flaws),Inept,|),3)],[if(match(get(%#/Dat`Flaws),Erratic Chakra,|),3)])]
+
+
+
+Training Gains (Progress) Algorithm: ceil(mul(rand(mul(Shinobi Rank,.25),mul(Shinobi Rank,1.25)),add(Quality,Inspiration)))  | (10*.25) * (1+0) = 4 Projected Min or (80*1.25)*(3+3) = 600 Projeted Max
+Training Preparation (Quality) Algorithm: min(add(1,fdiv(Times Prepared,add(10,QualityCalc))),3)
+Training Perserverence (Endurance) Algorithm: ceil(mul(Max Stamina,add(.05,EndCalc)))
+
+Stat Algorithm:  ceil(mul(add(Stat,Tier,3),add(500,Greater|Genius -250, Inferior|Impaired 250))) = 1000 Min, 15000 Max
+Jutsu Algorithm: ceil(mul(add(PL,Tier,5, # of Spec),add(500, Affinity - 250))) = 1500 Min, 15000 Max
+RP Skill Algorithm:  ceil(mul(add(RP Skill,Tier,3),add(500,Talented -150, Prodigy -100|Genius -250, Untalented 150, Late Bloomer 100|Impaired 250))) = 1000 Min, 15000 Max
+
+
+
+
+
+
+
+
 
 
