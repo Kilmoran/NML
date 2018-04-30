@@ -68,23 +68,27 @@ Categories: Stats, Jutsu, RP Skills
 Sub Categories: Specified Stat, Specified Jutsu, Specified RP Skill
 
 Inspiration: static 3x multiplier, random chance of occuring. 
-&FUNC`EndCALC #2082=[add([if(match(get(%#/Dat`Merits),Vigorous,|),-.01)],[if(match(get(%#/Dat`Merits),High Chakra,|),-.01)],[if(match(get(%#/Dat`Merits),Tough,|),-.01)],[if(match(get(%#/Dat`Flaws),Enervated,|),.01)],[if(match(get(%#/Dat`Flaws),Low Chakra,|),.01)],[if(match(get(%#/Dat`Flaws),Frail,|),.01)])]
+&FUNC`StamCALC #2082=[add([if(match(get(%#/Dat`Merits),Vigorous,|),-.01)],[if(match(get(%#/Dat`Merits),High Chakra,|),-.01)],[if(match(get(%#/Dat`Merits),Tough,|),-.01)],[if(match(get(%#/Dat`Flaws),Enervated,|),.01)],[if(match(get(%#/Dat`Flaws),Low Chakra,|),.01)],[if(match(get(%#/Dat`Flaws),Frail,|),.01)])]
 &FUNC`QualityCALC #2082=[add([if(match(get(%#/Dat`Merits),Gifted,|),-3)],[if(match(get(%#/Dat`Merits),Perfected Chakra Molding,|),-3)],[if(match(get(%#/Dat`Flaws),Inept,|),3)],[if(match(get(%#/Dat`Flaws),Erratic Chakra,|),3)])]
 
 
 
 Training Gains (Progress) Algorithm: ceil(mul(rand(mul(Shinobi Rank,.25),mul(Shinobi Rank,1.25)),add(Quality,Inspiration)))  | (10*.25) * (1+0) = 4 Projected Min or (80*1.25)*(3+3) = 600 Projeted Max
 Training Preparation (Quality) Algorithm: min(add(1,fdiv(Times Prepared,add(10,QualityCalc))),3)
-Training Perserverence (Endurance) Algorithm: ceil(mul(Max Stamina,add(.05,EndCalc)))
+Training Perserverence (Endurance) Algorithm: ceil(mul(get(%#/Dat`Stamina`Max),add(.05,[u(#2082/Func`StamCalc)])))
 
 Stat Algorithm:  ceil(mul(add(Stat,Tier,3),add(500,Greater|Genius -250, Inferior|Impaired 250))) = 1000 Min, 15000 Max
 Jutsu Algorithm: ceil(mul(add(PL,Tier,5, # of Spec),add(500, Affinity - 250))) = 1500 Min, 15000 Max
 RP Skill Algorithm:  ceil(mul(add(RP Skill,Tier,3),add(500,Talented -150, Prodigy -100|Genius -250, Untalented 150, Late Bloomer 100|Impaired 250))) = 1000 Min, 15000 Max
 
 
+&Cmd`NTraining #2082=$+NewTrain *=*:@assert match(Stat|Jutsu|Skill,%0,|)={@pemit %#=[prompt(Training)] %0 is not something that you can train. Try Stat, Jutsu, or Skill instead.};@assert !hasattr(%#/Dat`Training[caplist(%0,,,L)])={@pemit %#=[prompt(Training)] You must complete your current [extract(get(%#/Dat`Training[caplist(%0,,,L)]),1,1,|)] training first.};@assert or([and(match(Stat,%0),match(Taijutsu|Ninjutsu|Genjutsu|Power|Speed|Stamina|Intelligence|Hand Seals,%1*,|))],[and(match(Jutsu,%0),hasattr(%#/Dat`JutsuAttributes`[edit(%1,%b,-)]))],[and(match(Skill,%0),match([iter(u(#244/dat`rpskills), if(elements(u(%#/dat`rpskills), #@,|), ##|),|,)],%1,|))])={@pemit %#=[prompt(Training)] The type of training you are performing and the specific task you are attempting to train are incompatible.};@set %#=Dat`Training%0:[grab(Stat|Jutsu|Skill,%0,|)]|[caplist(%1,,,L)]|[u(#2082/func`Shinobirankcalc)]|0|0|0|0;@pemit %#=[prompt(Training)] You have begun to train a [caplist(%0,,,L)] with the [caplist(%1,,,L)] ability.; @oemit %#= %N has begun to train [obj(%#)] [caplist(%1,,,L)] ability.
 
 
+Type|Ability|Proficiency|Quality|Progress|Preserverence|Inspiration
 
+
+&CMD`TRAINQUALITY #2082=$+NewTrain *=Quality:@assert match([extract(get(%#/Dat`Training[switch(1,hasattr(%#/Dat`TrainingStat),Stat,hasattr(%#/Dat`TrainingJutsu),Jutsu,hasattr(%#/Dat`TrainingSkill),Skill)]),1,1,|)],%0,|)={@pemit %#=[prompt(Training)] %0 is not a valid option. Please do [ansi(hg,+train)]/[ansi(hr,<Category>)] Progress where [ansi(hr,<Category>)] is one of [ansi(y,Jutsu)], [ansi(y,Stat)], or [ansi(y,Skill)] };@assert hasattr(%#/Dat`Training%0)={@pemit %#=[prompt(Training)] You must begin a [caplist(%0,,,L)] training session first.}; @eval [setq(0,ceil(rand(mul([extract(get(%#/Dat`Training%0),3,1,|)],.25),mul([extract(get(%#/Dat`Training%0),3,1,|)],1.25))))][setq(1,max(rand([div(%q0,5)],[div(%q0,2)]),5))][setq(2,[ceil(mul([extract(get(%#/Dat`Training%0),5,1,|)],add(1,fdiv(u(#2082/func`shinobirankcalc),50))))])][setq(3, [extract(get(%#/Dat`Training%0),4,1,|)])]; @set %#=Dat`Training%0:[replace(get(%#/Dat`Training%0),4,[add(extract(get(%#/Dat`Training%0),4,1,|),%q0,[if(eq(extract(get(%#/Dat`Training%0),7,1,|),1),[rand(10,[add(11,%q0)])],0)])],|)]; @set %#=Dat`Training%0:[replace(get(%#/Dat`Training%0),6,[max(add(extract(get(%#/Dat`Training%0),6,1,|),%q1),0)],|)]; @set %#=Dat`Training%0:[replace(get(%#/Dat`Training%0),7,[if(gte(add(rand(100),u(#2082/func`shinobirankcalc)),100),1,0)],|)]; @pemit %#=[Prompt(Training)] Your Quality has been raised to [extract(get(%#/Dat`Training%0),4,1,|)] ([ansi(hg, +[sub([extract(get(%#/Dat`Training%0),4,1,|)], %q3)])]) and [u(fn`endureDisplay, [extract(get(%#/Dat`Training%0),6,1,|)])] ([ansi(hr, +%q1)]) Stamina has been expended. [if(eq(extract(get(%#/Dat`Training%0),7,1,|),1), Your effort pays off with a burst of Inspiration!)]; @eval [if(lte(extract(get(%#/Dat`Training%0),6,1,|),0),[oemit(%#,{%r[prompt(Training)] Having pushed [obj(%#)]self to the limit%, %N finishes their training regiment.})] [pemit(%#,%r[prompt(Training)] You have earned a total of [min(%q2,5000)] Experience from your training session!)])];@if lte(extract(get(%#/Dat`Training%0),6,1,|),0)={@set %#=Dat`XP:[add(get(%#/Dat`XP),[min(%q2,5000)])]; @cemit Monitor-XP=[prompt(Training)] %N has received [min(%q2,5000)] XP from training.; @set %#=dat`xp-trained:[add([min(5000,%q2)], [get(%#/dat`XP-Trained)])]; @set %#=Dat`Training%0: }
 
 
 
