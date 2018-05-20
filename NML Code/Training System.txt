@@ -78,7 +78,7 @@ Training Preparation (Quality) Algorithm: [min(round(add(1,fdiv([extract(get(%#/
 Training Perserverence (Endurance) Algorithm: [ceil(mul(mul(get(%#/Dat`Stamina`Max),add(.05,[u(#2082/Func`StamCalc)])),add(1,[if(match(get(%#/Dat`Merits),Rapid Recovery,|),-.25)],[if(match(get(%#/Dat`Merits),Tough,|),-.25)],[if(match(get(%#/Dat`Merits),Quick Recovery,|),-.25)],[if(match(get(%#/Dat`Flaws),Frail,|),.25)],[if(match(get(%#/Dat`Flaws),Slow Recovery,|),.25)])))]
 
 Stat Algorithm:  
-&func`StatAlg #2082=[ceil(mul(add([extract(get(%#/Dat`PrimaryStats),[match(get(#244/Dat`PrimaryStats),%0,|)],1,|)],[get(%#/Dat`Tier)],3),add(500,[if(or(match(get(%#/Dat`Merits),Greater %0*,|),match(get(%#/Dat`Merits),Genius,|)),-250,0)],[if(or(match(get(%#/Dat`Flaws),Inferior %0*,|),match(get(%#/Dat`Flaws),Impaired,|)),250,0)])))] 
+&func`StatAlg #2082=[ceil(mul(add(fdiv(ladd(get(%#/Dat`PrimaryStats),|),8),[get(%#/Dat`Tier)],3),add(500,[if(or(match(get(%#/Dat`Merits),Greater %0*,|),match(get(%#/Dat`Merits),Genius,|)),-250,0)],[if(or(match(get(%#/Dat`Flaws),Inferior %0*,|),match(get(%#/Dat`Flaws),Impaired,|)),250,0)])))] 
 = 1000 Min, 15000 Max
 
 Jutsu Algorithm: 
