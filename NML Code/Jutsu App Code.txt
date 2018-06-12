@@ -59,7 +59,7 @@ ID | Author | Category | Type | Archetype | Method | Special | Pre Req | Range |
 ---- App System Lists ----
 
 &LIST`JUTSU-SQL #1215=Category Archetype Type Method Special Range Rank
-&LIST`JUTSU-SQLCOLS #1215=3 5 4 6 7 8 9
+&LIST`JUTSU-SQLCOLS #1215=3 4 5 6 7 8 9
 &LIST`JUTSU-APPNUMS #1215=1 2 3 3 4 4 5 6 8 9 10 10 11 11 12 13 7 7 7 7 7 7
 &LIST`JUTSU-APPFIELDS #1215=Name|Access|Cat|Category|Archetype|Arche|Type|Method|Range|Rank|Desc|Description|Alt|Alt Name|Prefix|Notes|Spec|Special|Special Action|SpecialAction|Special Actions|Specs
 &LIST`JUTSU-APPFUNCS #1215=Name|Access|Category|Category|Archetype|Archetype|Type|Method|Range|Rank|Desc|Desc|Alt|Alt|Prefix|Notes|SpecAdd|SpecAdd|SpecAdd|SpecAdd|SpecAdd|SpecAdd
