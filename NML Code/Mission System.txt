@@ -145,4 +145,3 @@ FUNC`SECONDARYOBJECTIVES #2082=[Switchall(%0,Grab(Athletics|Tree Walking|Water W
 
 [exctract(get(%L/Dat`MissionControl),3,1,|)]
 
-
