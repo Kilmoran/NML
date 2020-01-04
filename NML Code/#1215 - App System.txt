@@ -55,7 +55,7 @@
 
 &FN`ARCHETYPE #1215=@assert [t([setr(0, [elementsmux([get(%#/dat`jutsuapp)], 3, |)])])]={@pemit %#=[prompt(app)] You must select a category for your jutsu with [ansi(hg, +app/jutsu Category=, hr, <Category>)] first.}; @assert [t([setr(1, [grab([v(list`archetypes)], %0, |)])])]={@pemit %#=[prompt(app)] [ansi(y, %0)] is not a valid Archetype. Try [elist([v(list`archetypes)],or,|,,,[ansi(y, %0)])].}; @assert [match([v(list`archetypes`%q0)], %0, |)]={@pemit %#=[prompt(app)] [ansi(y, %q1)] is not an appropriate Archetype for your current Category. Please choose from [elist([v(list`archetypes`%q0)],or,|,,,[ansi(y, %0)])]}; @assert [u(chk`archeSpecs`[edit(%q1, %b, -)], %#)]={@pemit %#=[prompt(app)] Your specialties do not allow for the [ansi(y, %q1)] Archetype to be applied.}; @set %#=dat`jutsuapp:[replace([get(%#/dat`jutsuApp)], 4, %q1, |)]; @set %#=dat`jutsuApp:[replace([get(%#/dat`JutsuApp)], 5 7,,|)]; @pemit %#=[prompt(App)] The Archetype of the [ansi(0xd0, [elementsmux([get(%#/dat`jutsuapp)], 1, |)])] jutsu is now [ansi(y, [elementsmux([get(%#/dat`jutsuapp)], 4, |)])].
 
-Archetype Lists - Category Limits:
+@@ Archetype Lists - Category Limits:
 
 	&LIST`ARCHETYPES #1215=Taijutsu|Bukijutsu|Chakra Flow Taijutsu|Chakra Flow Bukijutsu|Ninjutsu|Seals|Calligraphy|Nintaijutsu|Combination|Tota
 
@@ -65,7 +65,7 @@ Archetype Lists - Category Limits:
 
 	&LIST`ARCHETYPES`GENJUTSU #1215=Genjutsu|GenTaijutsu|GenBukijutsu
 
-Archetype Lists - Specialty Requirements:
+@@ Archetype Lists - Specialty Requirements:
 
 	&CHK`ARCHESPECS`TAIJUTSU #1215=[match([get(%0/dat`ExpertiseList)], Martial Arts*, |)]
 
@@ -138,57 +138,17 @@ Archetype Lists - Specialty Requirements:
 &FN`SPECADD #1215=@assert [t([elementsmux([get(%#/dat`jutsuapp)], 6, |)])]={@pemit %#=[prompt(app)] Please select a Method using [formathelp({+app/jutsu Method=<Attack|Defend>})]}; @eval [iter([secure(%0)], [if([strmatch(##, !*)], [setq(2, [r(2)] [grab([v(list`specs`[elementsmux([get(%#/dat`jutsuapp)], 6, |)])], [after(##, !)], |)])], [setq(1, [r(1)] [grab([v(list`specs`[elementsmux([get(%#/dat`jutsuapp)], 6, |)])], ##, |)])])])]; @assert [t(%q1 %q2)]={@pemit %#=[prompt(app)] Please select valid Special Actions. Possible selections (disregarding your specialties): [elist([setinter([v(list`specs`[edit([elementsmux([get(%#/dat`jutsuapp)], 4, |)], %b, -)])], [v(list`specs`[elementsmux([get(%#/dat`jutsuapp)], 6, |)])], |)], or,|,,,[ansi(y, %0)])].}; @assert [land([iter(%q1, [if([match([get(%#/dat`expertiseList)], [v(list`specs`##)]*, |)],1, 0[setq(4, %q4 ##)])])])]={@pemit %#=[prompt(app)] You do not have the specialties to apply the following special actions: %q4}; @assert [lor([iter(%q1, [if([or([match([u(#1215/list`specs`[edit([elementsmux([get(%#/dat`jutsuapp)], 4, |)], %b, -)])], ##, |)], [t([u(fn`SpecExceptions`##, %#)])])],1,0[setq(5, %q5 ##)])])])]={@pemit %#=[prompt(Game)] You do not have the proper Archetype for the %q5 Special Action(s).}; @break [and([strmatch([elementsmux([get(%#/dat`jutsuapp)], 4, |)], Seals)], [gt([words([setr(3, [setinter([edit([u(list`specs`[edit([elementsmux([get(%#/dat`jutsuapp)], 4, |)], %b, -)], %#)], |, ~)], [setunion([setdiff([elementsmux([get(%#/dat`jutsuapp)], 7, |)], [edit([trim(%q2,,%b)], %b, ~)], ~)], [edit([trim(%q1,,%b)], %b, ~)], ~)], ~)])], ~)], 1)])]={@pemit %#=[prompt(app)] A jutsu with the Seal Archetype may only have one Special Action.}; @set %#=dat`jutsuapp:[replace([get(%#/dat`jutsuapp)], 7, %q3, |)]; @pemit %#=[prompt(App)] The Special Actions of the [ansi(0xd0, [elementsmux([get(%#/dat`jutsuapp)], 1, |)])] jutsu are now: [elist([elementsmux([get(%#/dat`jutsuapp)], 7, |)], and,~,,,[ansi(y, %0)])].
 
 
-Special Actions - Exceptions:
+@@ Special Actions - Exceptions:
 
 	&FN`SPECEXCEPTIONS`DOT #1215=[and([strmatch([get(%0/dat`clan)], Yamata)], [strmatch([elementsmux([get(%0/dat`jutsuapp)], 4, |)], Taijutsu)])]
 
-Special Actions - Method:
+@@ Special Actions - Method:
 
 	&LIST`SPECS`ATTACK #1215=Targeted|Powerful|Disrupt|Flurry|Barrage|Charge|Feint|DoT|Absorb|Drain|Counter|Clash|Collab
 
 	&LIST`SPECS`DEFEND #1215=Turtle|Barrier|Reflection|Block|Evade|Avoid
 
-Special Actions - Specialty Requirements:
-
-	&LIST`SPECS`CHARGE #1215=Chakra Flow
-
-	&LIST`SPECS`DOT #1215=Attrition
-
-	&LIST`SPECS`DRAIN #1215=Chakra Drain
-
-	&LIST`SPECS`ABSORB #1215=Chakra Absorption
-
-	&LIST`SPECS`REFLECTION #1215=Reflection
-
-	&LIST`SPECS`FEINT #1215=Ambidexterity
-
-	&LIST`SPECS`TARGETED #1215=Targeted
-
-	&LIST`SPECS`POWERFUL #1215=Powerful
-
-	&LIST`SPECS`DISRUPT #1215=Disruption
-
-	&LIST`SPECS`FLURRY #1215=Onslaught
-
-	&LIST`SPECS`BARRAGE #1215=Onslaught
-
-	&LIST`SPECS`COUNTER #1215=Counter Offensive
-
-	&LIST`SPECS`CLASH #1215=Counter Offensive
-
-	&LIST`SPECS`COLLAB #1215=Synchronized Effort
-
-	&LIST`SPECS`TURTLE #1215=Fortification
-
-	&LIST`SPECS`BARRIER #1215=Barrier
-
-	&LIST`SPECS`BLOCK #1215=Fortification
-
-	&LIST`SPECS`EVADE #1215=Evasive Maneuvers
-
-	&LIST`SPECS`AVOID #1215=Evasive Maneuvers
-
-Special Actions - Archetype Limits:
+@@ Special Actions - Archetype Limits:
 
 	&LIST`SPECS`TAIJUTSU #1215=Targeted|Powerful|Disrupt|Flurry|DoT|Feint|Counter|Clash|Block|Evade|Avoid|Collab
 
@@ -241,6 +201,7 @@ Jutsu Resource Costs:
 &CMD`JUTSUAPPDENIAL #1215=$+JutsuApps/Deny *=*:@assert [hasslabs(%#,staff-skill)]={@pemit %#=[Prompt(System)] You are not permitted to use this command.}; @assert [t([setr(0, [pmatch(%0)])])]={@pemit %#=[prompt(App)] That is not a valid player.}; @assert [match(get(#1215/List`Jutsuapps), %q0)]={@pemit %#=[prompt(Staff)] There is no Jutsu App for [name(%q0)].};@wipe %q0/dat`jutsuapproval; @set #1215=List`JutsuApps:[remove([get(#1215/List`JutsuApps)],%q0)]; @cemit Monitor-App={%k has just denied [name(%q0)]'s Jutsu App for the following reason: %1}; @force [pmatch(NML-Bot)]={mail %q0=Jutsu App Denied//{Your current Jutsu Application for [extract(get(%#/dat`jutsuapp),1,1,|)] has been denied for the following reason(s):%%r%%r%1%%r%%rIf you have any questions, please send in a [ansi(hg, +request)].}}
 
 ---------------------------------[ TF Apps ]---------------------------------
+
 &CMD`TFCREATE #1215=$+app/tf create:@pemit %#=[prompt(Game)] Your TF App has been reset.; @wipe %#/dat`tfapp
 
 &CMD`TFAPP-VIEW #1215=$+app/tf:@pemit %#=[u(#1215/func`tf-View, %#)]
