@@ -6,14 +6,36 @@
 
 2. Jutsu Apps - Staff Side
 	* +JutsuApps
+	* +JutsuApps/view
 	* +JutsuApps/alter
 	* +JutsuApps/Approve
 	* +JutsuApps/Deny
 
 3. TF Apps
+	* +app/tf create
+	* +app/tf - Viewer
+	* +app/tf - Editor
+	* +App/TF Submit
+
 4. TF Apps - Staff Side
+	* +TFApps
+	* +TFApps/alter
+	* +TFApps/Approve
+	* +TFApps/Deny
+
 5. Clan TFs
+	* +ClanTF
+	* Lists
+
 6. Auto Purchases
+	* Stats
+	* Proficiency
+	* Mastery
+	* RP Skills
+	* Specialty Slots
+	* Expertise Slots
+	* TF Ranks
+
 7. Teaching
 8. TC Stuff
 9. Etc Functions
@@ -209,7 +231,7 @@
 
 	&LIST`SPECS`TOTA #1215=Absorb|Avoid|Barrage|Barrier|Block|Charge|Clash|Collab|Counter|Disrupt|DoT|Drain|Evade|Feint|Flurry|Powerful|Reflection|Targeted|Turtle
 
-Jutsu Resource Costs:
+@@ Jutsu Resource Costs:
 
 	&FN`JUTSUXPCOST #1215=[round(mul([extract(get(#254/dat`JutsuRanks`costs),[match(get(#254/Dat`JutsuRanks),elementsmux([get(%0/dat`jutsuapp)], 9, |),|)],1,|)],add(1,mul([words([extract(get(%0/dat`jutsuapp),7,1,|)],~)],.2),[if(match([elementsmux([get(%0/dat`jutsuapp)], 8, |)],All,|),.34,[if(gte(words([elementsmux([get(%0/dat`jutsuapp)], 8, |)],|),1),[round(mul(words([elementsmux([get(%0/dat`jutsuapp)], 8, |)]),.08),2)],0)])])),-1)]
 
