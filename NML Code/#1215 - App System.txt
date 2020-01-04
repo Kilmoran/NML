@@ -137,7 +137,6 @@
 
 &FN`SPECADD #1215=@assert [t([elementsmux([get(%#/dat`jutsuapp)], 6, |)])]={@pemit %#=[prompt(app)] Please select a Method using [formathelp({+app/jutsu Method=<Attack|Defend>})]}; @eval [iter([secure(%0)], [if([strmatch(##, !*)], [setq(2, [r(2)] [grab([v(list`specs`[elementsmux([get(%#/dat`jutsuapp)], 6, |)])], [after(##, !)], |)])], [setq(1, [r(1)] [grab([v(list`specs`[elementsmux([get(%#/dat`jutsuapp)], 6, |)])], ##, |)])])])]; @assert [t(%q1 %q2)]={@pemit %#=[prompt(app)] Please select valid Special Actions. Possible selections (disregarding your specialties): [elist([setinter([v(list`specs`[edit([elementsmux([get(%#/dat`jutsuapp)], 4, |)], %b, -)])], [v(list`specs`[elementsmux([get(%#/dat`jutsuapp)], 6, |)])], |)], or,|,,,[ansi(y, %0)])].}; @assert [land([iter(%q1, [if([match([get(%#/dat`expertiseList)], [v(list`specs`##)]*, |)],1, 0[setq(4, %q4 ##)])])])]={@pemit %#=[prompt(app)] You do not have the specialties to apply the following special actions: %q4}; @assert [lor([iter(%q1, [if([or([match([u(#1215/list`specs`[edit([elementsmux([get(%#/dat`jutsuapp)], 4, |)], %b, -)])], ##, |)], [t([u(fn`SpecExceptions`##, %#)])])],1,0[setq(5, %q5 ##)])])])]={@pemit %#=[prompt(Game)] You do not have the proper Archetype for the %q5 Special Action(s).}; @break [and([strmatch([elementsmux([get(%#/dat`jutsuapp)], 4, |)], Seals)], [gt([words([setr(3, [setinter([edit([u(list`specs`[edit([elementsmux([get(%#/dat`jutsuapp)], 4, |)], %b, -)], %#)], |, ~)], [setunion([setdiff([elementsmux([get(%#/dat`jutsuapp)], 7, |)], [edit([trim(%q2,,%b)], %b, ~)], ~)], [edit([trim(%q1,,%b)], %b, ~)], ~)], ~)])], ~)], 1)])]={@pemit %#=[prompt(app)] A jutsu with the Seal Archetype may only have one Special Action.}; @set %#=dat`jutsuapp:[replace([get(%#/dat`jutsuapp)], 7, %q3, |)]; @pemit %#=[prompt(App)] The Special Actions of the [ansi(0xd0, [elementsmux([get(%#/dat`jutsuapp)], 1, |)])] jutsu are now: [elist([elementsmux([get(%#/dat`jutsuapp)], 7, |)], and,~,,,[ansi(y, %0)])].
 
-
 @@ Special Actions - Exceptions:
 
 	&FN`SPECEXCEPTIONS`DOT #1215=[and([strmatch([get(%0/dat`clan)], Yamata)], [strmatch([elementsmux([get(%0/dat`jutsuapp)], 4, |)], Taijutsu)])]
@@ -147,6 +146,46 @@
 	&LIST`SPECS`ATTACK #1215=Targeted|Powerful|Disrupt|Flurry|Barrage|Charge|Feint|DoT|Absorb|Drain|Counter|Clash|Collab
 
 	&LIST`SPECS`DEFEND #1215=Turtle|Barrier|Reflection|Block|Evade|Avoid
+
+@@ Special Actions - Specialty Requirements:
+
+  	&LIST`SPECS`CHARGE #1215=Chakra Flow
+
+  	&LIST`SPECS`DOT #1215=Attrition
+
+  	&LIST`SPECS`DRAIN #1215=Chakra Drain
+
+  	&LIST`SPECS`ABSORB #1215=Chakra Absorption
+
+  	&LIST`SPECS`REFLECTION #1215=Reflection
+
+  	&LIST`SPECS`FEINT #1215=Ambidexterity
+
+  	&LIST`SPECS`TARGETED #1215=Targeted
+
+  	&LIST`SPECS`POWERFUL #1215=Powerful
+
+  	&LIST`SPECS`DISRUPT #1215=Disruption
+
+  	&LIST`SPECS`FLURRY #1215=Onslaught
+
+  	&LIST`SPECS`BARRAGE #1215=Onslaught
+
+  	&LIST`SPECS`COUNTER #1215=Counter Offensive
+
+  	&LIST`SPECS`CLASH #1215=Counter Offensive
+
+  	&LIST`SPECS`COLLAB #1215=Synchronized Effort
+
+  	&LIST`SPECS`TURTLE #1215=Fortification
+
+  	&LIST`SPECS`BARRIER #1215=Barrier
+
+  	&LIST`SPECS`BLOCK #1215=Fortification
+
+  	&LIST`SPECS`EVADE #1215=Evasive Maneuvers
+
+  	&LIST`SPECS`AVOID #1215=Evasive Maneuvers
 
 @@ Special Actions - Archetype Limits:
 
@@ -255,7 +294,6 @@ Jutsu Resource Costs:
 &CMD`PROFICIENCYAPP #1215=$+buy/proficiency *:@break [member([get(%l/list`players)],%#)]={@pemit %#=%r%r[prompt(Game)] You cannot purchase things while in Order.%r};@break hasattr(%#/Dat`JutsuAttributes`[edit(%0,%b,-)])={@break [or(gte(get(%#/Dat`KP),[max(sub(3,[after(extract(get(%#/Dat`ExpertiseList),[match(get(%#/Dat`ExpertiseList),Elite Tradition*,|)],1,|),^,1)]),1)]),[hasattr(%#/Dat`NPC)])]={@break [or(gte(get(%#/Dat`XP),[switch([extract(get(%#/dat`jutsuattributes`[edit(%0,%b,-)]),14,1,|)],1,1000,2,2000,3,3000,4,4000,5,5000)]),[hasattr(%#/Dat`NPC)])]={@break lt([extract(get(%#/dat`jutsuattributes`[edit(%0,%b,-)]),14,1,|)],6)={ @set %#=Dat`JutsuAttributes`[edit(%0,%b,-)]:[replace(get(%#/dat`jutsuattributes`[edit(%0,%b,-)]),14,[add([extract(get(%#/Dat`jutsuattributes`[edit(%0,%b,-)]),14,1,|)],1)],|)] ;@set %#=Dat`XP:[sub(get(%#/Dat`XP),[if([hasattr(%#/Dat`NPC)],0,[switch([extract(get(%#/dat`jutsuattributes`[edit(%0,%b,-)]),14,1,|)],1,0,2,1000,3,2000,4,3000,5,4000,6,5000)])])]; @set %#=Dat`KP:[sub(get(%#/Dat`KP),[if([hasattr(%#/Dat`NPC)],0,[max(sub(3,[after(extract(get(%#/Dat`ExpertiseList),[match(get(%#/Dat`ExpertiseList),Elite Tradition*,|)],1,|),^,1)]),1)])])]; @set %#=Dat`JutsuAttributes`[edit(%0,%b,-)]:[replace(get(%#/dat`jutsuattributes`[edit(%0,%b,-)]),15,[add([extract(get(%#/Dat`jutsuattributes`[edit(%0,%b,-)]),15,1,|)],[switch([extract(get(%#/dat`jutsuattributes`[edit(%0,%b,-)]),14,1,|)],2,4,3,4,4,5,5,5,6,6)])],|)];@pemit %#=[prompt(Game)] %N has increased the Jutsu Proficiency Level of [caplist(%0)] to [extract(get(%#/Dat`jutsuattributes`[edit(%0,%b,-)]),14,1,|)], raising the amount of available Jutsu Mastery Points to [extract(get(%#/Dat`jutsuattributes`[edit(%0,%b,-)]),15,1,|)] for [switch([extract(get(%#/dat`jutsuattributes`[edit(%0,%b,-)]),14,1,|)],1,0,2,1000,3,2000,4,3000,5,4000,6,5000)] XP and [max(sub(3,[after(extract(get(%#/Dat`ExpertiseList),[match(get(%#/Dat`ExpertiseList),Elite Tradition*,|)],1,|),^,1)]),1)] KP[if([match(get(%#/Dat`ExpertiseList),Elite Tradition*,|)],%b%(Elite Tradition%),)]. %r%r [get(%#/Dat`XP)] XP, and [get(%#/Dat`KP)] KP remain. ;@cemit monitor-app=[prompt(App)] %N has increased the Proficiency Level of their [caplist(%0,,,L)] jutsu to [extract(get(%#/Dat`jutsuattributes`[edit(%0,%b,-)]),14,1,|)]. };@pemit %#=[prompt(Game)] %N has already achieved the maximum Proficiency Level for the [caplist(%0)] jutsu. };@pemit %#=[prompt(Game)] %N does not have enough XP. };@pemit %#=[prompt(Game)] %N does not have enough KP.}; @pemit %#=[prompt(Game)] %N does not have the [caplist(%0)] Jutsu.
 
 &CMD`MASTERYAPP #1215=$+buy/mastery *=*:@assert [hasattr(%#/dat`approval)]={@pemit %#=[prompt(game)] You cannot buy things while in CG.}; @break hasattr(%#/Dat`JutsuAttributes`[edit(%0,%b,-)])={@break match(get(#244/Dat`JutsuAttributes),%1,|)={@break lt([extract(get(%#/Dat`JutsuAttributes`[edit(%0,%b,-)]),[match(get(#244/Dat`JutsuAttributes),%1,|)],1,|)],10)={@break gt([extract(get(%#/dat`jutsuattributes`[edit(%0,%b,-)]),15,1,|)],0)={@set %#=Dat`JutsuAttributes`[edit(%0,%b,-)]:[replace(get(%#/dat`jutsuattributes`[edit(%0,%b,-)]),15,[sub([extract(get(%#/Dat`jutsuattributes`[edit(%0,%b,-)]),15,1,|)],1)],|)]; @set %#=Dat`JutsuAttributes`[edit(%0,%b,-)]:[replace(get(%#/dat`jutsuattributes`[edit(%0,%b,-)]),[match(get(#244/Dat`JutsuAttributes),%1,|)],[add([extract(get(%#/Dat`jutsuattributes`[edit(%0,%b,-)]),[match(get(#244/Dat`JutsuAttributes),%1,|)],1,|)],1)],|)]; @pemit %#=[prompt(Game)] %N has increased the [caplist(%1)] Mastery Level of [caplist(%0)] to [extract(get(%#/Dat`jutsuattributes`[edit(%0,%b,-)]),[match(get(#244/Dat`JutsuAttributes),%1,|)],1,|)]!};@pemit %#=[prompt(Game)] The [caplist(%0)] jutsu has no Mastery Points to spend. Increase Proficiency with the Jutsu or attain Expertise in it's Specialization to gain more points.};@pemit %#=[prompt(Game)] %N has already mastered [caplist(%1)] for the [caplist(%0)] Jutsu.%r}; @pemit %#=[prompt(Game)] [caplist(%1)] is not a Jutsu Attribute.%r}; @pemit %#=[prompt(Game)] %N does not have the [caplist(%0)] Jutsu.%r
-
 
 &CMD`RPSKILL #1215=$+buy/RPskill *:@break [member([get(%l/list`players)],%#)]={@pemit %#=%r%r[prompt(App)] You cannot purchase things while in Order.%r};@assert gt([extract(get(%#/Dat`RPSKills),[match(get(#244/Dat`RPSKILLs),%0,|)],1,|)],0)={@pemit %#=[prompt(App)] You do not possess the [caplist(%0,,,L)] RP Skill.};@assert lt([extract(get(%#/Dat`RPSKills),[match(get(#244/Dat`RPSKILLs),%0,|)],1,|)],10)={@pemit %#=[prompt(App)] Your [caplist(%0,,,L)] RP Skill is already at the maximum level of 10.};@assert match(get(#244/Dat`RPSkills),%0,|)={@pemit %#=[prompt(App)] [caplist(%0,,,L)] is not an RP Skill.};@assert [or([hasattr(%#/Dat`NPC)],gte(get(%#/Dat`XP),1000))]={@pemit %#=[prompt(App)] You do not have enough XP(1000) to upgrade the [caplist(%0,,,L)] RP Skill.};@assert [or([hasattr(%#/Dat`NPC)],gte(get(%#/Dat`KP),[max(sub(2,[after(extract(get(%#/Dat`ExpertiseList),[match(get(%#/Dat`ExpertiseList),Elite Tradition*,|)],1,|),^,1)]),1)]))]={@pemit %#=[prompt(App)] You do not have enough KP([max(sub(2,[after(extract(get(%#/Dat`ExpertiseList),[match(get(%#/Dat`ExpertiseList),Elite Tradition*,|)],1,|),^,1)]),1)]) to upgrade the [caplist(%0,,,L)] RP Skill.};@set %#=Dat`RPSkills:[replace(get(%#/Dat`RPSKills),[match(get(#244/Dat`RPSKILLs),[grab(get(#244/Dat`RPSkills),%0,|)],|)],[add([extract(get(%#/Dat`RPSKills),[match(get(#244/Dat`RPSKILLs),%0,|)],1,|)],1)],|)]; @set %#=Dat`XP:[sub(get(%#/Dat`XP),[if([hasattr(%#/Dat`NPC)],0,1000)])]; @set %#=Dat`KP:[sub(get(%#/Dat`KP),[if([hasattr(%#/Dat`NPC)],0,max(sub(2,[after(extract(get(%#/Dat`ExpertiseList),[match(get(%#/Dat`ExpertiseList),Elite Tradition*,|)],1,|),^,1)]),1))])]; @pemit %#=[prompt(App)] You have successfully increased your [caplist(%0,,,L)] RP Skill to [extract(get(%#/Dat`RPSKills),[match(get(#244/Dat`RPSKILLs),%0,|)],1,|)]! You have [get(%#/Dat`XP)] XP and [get(%#/Dat`KP)] KP remaining.; @cemit monitor-app=[prompt(App)] %N has increased their [caplist(%0,,,L)] RP Skill to [extract(get(%#/Dat`RPSKills),[match(get(#244/Dat`RPSKILLs),%0,|)],1,|)].
 
