@@ -6,19 +6,19 @@
 
 &LIST`XP-NAMED-MODS XP System=NewPlayer MiniString SmallString MediumString LargeString JumboString SmallScene MediumScene LargeScene PlotFlag MasterApprentice Rival Enemy Companion MoodSet
 
-&LIST`XP-NUM-MODS XP System=7 4 7 11 15 19 7 9 13 8 5 6 7 6 5
+&list`xp-num-mods #121=7 3 7 9 11 13 7 9 13 8 5 6 7 6 5 4
 
 &FN`XP-CLEAR XP System=[if([and([hasattr(%0, dat`nextclear)], [gte([secs()], [get(%0/dat`nextclear)])])], [iter([lcon(%0/connect)], [set(##, dat`xp-gauge:)][set(##, dat`nextclear:)])][set(%0, dat`nextclear:)][wipe(%0/mood)][wipe(%0/pose`*)][wipe(%0/count)])]
 
 &FN`XP-GAINED-CALC XP System=[setq(0, [iter(setunion(lwho(),),[if([regmatchi([get(##/dat`xp-gauge)],%(mini|small|medium|large|jumbo%)string)], ##)])])][iter(%q0, [u(fn`update-xp, ##)])]
 
-&FN`UPDATE-XP XP System=[if([!hastags(%0, watching)], [set(%0, dat`xp-gained:[add([get(%0/dat`xp-gained)],[ladd([elements([v(list`xp-num-mods)], [parse([u(%0/dat`xp-gauge)], [match([v(list`xp-named-mods)], ##)])])])])])])]
+&fn`update-xp #121=[if([!hastags(%0, watching)], [set(%0, dat`xp-gained:[add([get(%0/dat`xp-gained)],[ladd([elements([v(list`xp-num-mods)], [parse([u(%0/dat`xp-gauge)], [match([v(list`xp-named-mods)], ##)])])])], [rand(0, 6)])])])]
 
 &FN`XP-PAYOUT XP System=[setq(0, [iter([search(type=player)], [if([hasattr(##, dat`xp-gained)], ##)])])][iter(%q0, [set(%i0, dat`xp:[add([get(%i0/dat`xp)],[get(%i0/dat`xp-gained)])])][Set(%i0,Dat`XP-weekly:[Add(get(%i0/Dat`xp-weekly),[get(%i0/dat`xp-gained)])])][Set(%i0,Dat`XP-lifetime:[Add(get(%i0/Dat`xp-lifetime),[get(%i0/dat`xp-gained)])])][wipe(%i0/dat`xp-gained)][if([gte([get(%i0/dat`XP-lifetime)], 10000)], [settag(%i0, !newplayer)])])]
 
 &FN`PLOT-MOD XP System=[iter([setunion([parse([lwho()], ##:[hastags([loc(##)], plot)])],)], [if([after(##,:)], [set([before(##,:)], dat`xp-gauge:[setunion([get([before(##,:)]/dat`xp-gauge)], PlotFlag)])], [set([before(##, :)], dat`xp-gauge:[setdiff([get([before(##, :)]/dat`xp-gauge)], PlotFlag)])])])]
 
-&TR`XP-MODS XP System=@trigger me/fn`plot-mod;@trigger me/fn`scene-size-mod;@trigger me/fn`teacher-mod;@trigger me/fn`rival-mod;@trigger me/fn`companion-mod;@trigger me/fn`newplayer-mod;@trigger me/fn`mood-mod
+&TR`XP-MODS XP System=@trigger me/fn`plot-mod;@trigger me/fn`scene-size-mod;@trigger me/fn`teacher-mod;@trigger me/fn`rival-mod;@trigger me/fn`companion-mod;@trigger me/fn`newplayer-mod;@trigger me/fn`teammate-mod;@trigger me/fn`mood-mod
 
 &FN`SCENE-SIZE-MOD XP System=[iter(setunion(lwho(),), [setq(0, words(iter(lcon(loc(##), connect), if(hastags(%i0, watching),,%i0))))][set(##, dat`xp-gauge:[setunion([switch(1, gt(%q0, 7), LargeScene, gt(%q0, 4), MediumScene, gt(%q0, 2), SmallScene)], [setdiff([get(##/dat`xp-gauge)], LargeScene SmallScene MediumScene)])])])]
 
@@ -35,6 +35,8 @@
 &FN`COMPANION-MOD XP System=[iter([setunion([lwho()],)], [if([and([!hastags([get(##/dat`companion)], watching)], [t([conn([get(##/dat`companion)])])], [strmatch([loc([get(##/dat`companion)])], [loc(##)])])], [set(##, dat`xp-gauge:[setunion([get(##/dat`xp-gauge)], Companion)])][set([get(##/dat`companion)], dat`xp-gauge:[setunion([get([get(##/dat`companion)]/dat`xp-gauge)], Companion)])])])]
 
 &FN`NEWPLAYER-MOD XP System=[iter([setunion([parse([lwho()], ##:[t([lor([iter([lcon([loc(##)], connect)], [hastags(%i0, newplayer)])])])])],)], [if([after(##,:)], [set([before(##,:)], dat`xp-gauge:[setunion([get([before(##,:)]/dat`xp-gauge)], NewPlayer)])], [set([before(##, :)], dat`xp-gauge:[setdiff([get([before(##, :)]/dat`xp-gauge)], NewPlayer)])])])]
+
+&FN`TEAMMATE-MOD XP System=[iter([setunion([lwho()],)], [iter([get(##/dat`teammates)], [if([and([!hastags(%i0, watching)], [t([conn(%i0)])], [strmatch([loc(%i0)], [loc(%i1)])])], [set(%i1, dat`xp-gauge:[setunion([get(%i1/dat`xp-gauge)], Teammate)])][set(%i0, dat`xp-gauge:[setunion([get(%i0/dat`xp-gauge)], Teammate)])])])])]
 
 &FN`MOOD-MOD XP System=[iter([setunion([lwho()],)], [if([hasattr([loc(##)], mood)], [set(##, dat`xp-gauge:[setunion([get(##/dat`xp-gauge)], MoodSet)])])])]
 
