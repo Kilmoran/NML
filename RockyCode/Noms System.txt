@@ -1,0 +1,95 @@
+Step 5: +nom System
+I suggest doing this next since we are going to be making it per character. The character-based set up will aid us in converting everything to an account-wide system later on. To recap, the +nom System is the ability for players to vote, once per week, for a character who has shown phenomenal RP. We were thinking 3-5 +noms per person, assuming per account. I suggest that how many +noms a person has to give be shown in +account and how many they've earned be shown in +xp. We also discussed a leaderboard where the top earners could be shown each week. We'll need to make a board for this (I don't want it going on Announcements since we compel people to read stuff on that board with annoying reminders). It should show, perhaps, only the top 5 for now. 
+
+Need new board for +noms stuff but will need a fn`bbpost
+
++bbpost Noms Board/Top 5=[extract(searchng(eplayer=hasattr(##/dat`noms-lifetime)))]
+
+
+@create Noms System @@ #2591
+@set Noms System = Inherit sidefx
+@create Noms System Functions @@ #2590
+@set Noms System Functions = Inherit sidefx
+
+
+&dat`noms @@ Noms earned by a character in a week
+
+th sqlite_query(Game, alter table Accounts add column "Noms Earned" integer default=0)
+th sqlite_query(Game, alter table Accounts add column "Weekly Noms" integer default=0)
+th sqlite_query(Game, alter table Accounts add column "Noms" integer default=5)
+
+
+@@ +nom <Player> - Gives a +nom to a player
+&cmd`nom #60=$+nom *:@assert [t([setr(0, [pmatch([secure(%0)])])])]={@pemit %#=[prompt(Game)] That is not a valid player to nominate.}; @assert [gt([sqlite_query(Game, select Noms from Accounts where Email="[get(%#/dat`account)]")], 0)]={@pemit %#=[prompt(Game)] You do not have any +noms to give.}; @assert [lt([get(%q0/dat`noms)], 20)]={@pemit %#=[prompt(game)] [ansi(y, [name(%q0)])] cannot receive any more +noms.}; @set %q0=dat`noms:[inc([get(%q0/dat`noms)])]; @pemit %#={[prompt(Game)] You have +nom'd [ansi(y, [name(%q0)])]!}]
+
+@@ Remove
+&FN`LP-GAIN #121=[iter([sqlite_query(Game, select Email from Accounts)], sqlite_query(Game, update Accounts Set LP=[add([sqlite_query(Game, select LP from Accounts where Email='%i0')], [setr(+, [gte([ladd([iter([sqlite_query(Game, select Approved%, "Approved NPCs" from Accounts where Email='%i0',%b)], [default(%i0/dat`xp-weekly, 0)][set(%i0, dat`xp-weekly:0)])])], 500)], bool)])]%, "LP Total"=[add([sqlite_query(Game, select "LP Total" from Accounts where Email='%i0')], %q<bool>)] where Email="%i0"),^)]
+
+@@ Replace LP with
+&FN`NOM-GAIN #121=[iter([sqlite_query(Game, select Email from Accounts)], ,^)]
+
+
+Iterate Through all Accounts:
+	* Set "Noms Weekly" to 0
+	For Each Character:
+		* Grab "XP", "XP Total", "Noms Earned", "Noms Weekly"
+		* Add dat`noms to "Noms Earned"
+		* Add dat`noms to "Noms Weekly"
+		* Reset dat`noms and "Noms"
+		* Add Noms Bonus to "XP" and "XP Total"
+
+sqlite_query(Game, update Accounts Set "Noms Earned"=[add([sqlite_query(Game, select "Noms Earned" from Accounts where Email='%i0')], [setr(+, [gte([ladd([iter([sqlite_query(Game, select Approved%, "Approved NPCs" from Accounts where Email='%i0',%b)], [default(%i0/dat`noms, 0)][set(%i0, dat`xp-weekly:0)])])], 500)], bool)])]%, "LP Total"=[add([sqlite_query(Game, select "LP Total" from Accounts where Email='%i0')], %q<bool>)] where Email="%i0")
+
+
+@@ %q<XP> - XP | XP Lifetime
+[setr(+, [sqlite_query(Game, select XP%, "XP Total" from Accounts where Email="[get(%i0/dat`account)]")], XP)]
+
+@@ XP is XP + Bonus
+sqlite_query(Game, update Accounts set XP=[add(%q<bonus>, [first(%q<XP>, |)])] where Email="[get(%i0/dat`account)]")
+
+@@ Total XP is Total XP + Bonus
+sqlite_query(Game, update Accounts set "XP Total"=[add(%q<bonus>, [rest(%q<XP>, |)])] where Email="[get(%i0/dat`account)]")
+
+@@ %q<Bonus> - XP bonus
+[setr(+, [mul([get(%i0/dat`noms)], [v(nom_bonus)], [get(%i0/dat`XP-weekly)])], bonus)]
+
+XP = (Noms Bonus * XP Weekly) + XP
+Total XP = (Noms Bonus * XP Weekly) + Total XP
+
+
+
+
+&nom_bonus #121=.05
+
+Step 6: Account-wide XP
+The next step should be making XP account-wide. +noms should still be calculating on each character, but then that total XP should go into an account-wide pool. I can't recall if XP is given out once a day or once a week, but that will likely need to be taken into account. When it comes to NPCs, the XP they earn should go onto their Account, but not XP given for purchasing stuff. At about the same time, all purchasing code needs to be adjusted to buy from the account-wide XP pool. Mission code will also need to be adjusted.
+  
+th sqlite_query(Game, alter table Accounts add column "Total XP" integer default=0)
+th sqlite_query(Game, alter table Accounts add column "XP" integer default=0)
+
+&FN`XP-PAYOUT #121=[setq(+, [iter([searchng(type=player)], [if([hasattr(##, dat`xp-gained)], ##)])], players)][iter([r(players)], [setq(1, [sqlite_query(Game, select XP%, "XP Lifetime" from Accounts where Email="[get(%i0/dat`account)]")])][sqlite_query(Game, update Accounts set XP=[add([first(%q1, |)], [get(%i0/dat`xp-gained)])]%, "XP Lifetime"=[add([rest(%q1, |)], [get(%i0/dat`xp-gained)])])][set(%i0,Dat`XP-weekly:[add(get(%i0/Dat`xp-weekly),[get(%i0/dat`xp-gained)])])][set(%i0,Dat`XP-lifetime:[add(get(%i0/Dat`xp-lifetime),[get(%i0/dat`xp-gained)])])][wipe(%i0/dat`xp-gained)][if([gte([get(%i0/dat`XP-lifetime)], 10000)], [settag(%i0, !newplayer)])])]
+
+
+
+
+ @@ XP|XP Lifetime
+
+Total XP is Lifetime XP summed across Characters
+XP is XP summed across Characters
+
+On Characters:
+&dat`xp-gained @@ XP Gained in a day
+&dat`xp-spent @@ XP spent by the character
+&dat`xp-lifetime @@ XP earned on a single character
+&dat`xp-weekly @@ XP gained in a week by a single character
+&dat`cgxp @@ Should not be wiped upon approval
+
+XP in account upon CG Completion: XP + CGXP
+XP in account upon Re-CG: XP - CGXP
+XP on char upon Re-CG: full CGXP, same lifetime, same Unspent
+XP in Account upon ReCG Approval: XP + CGXP + XP Spent
+
+
+Noms Adjustment:
+XP = (Noms Bonus * XP Weekly) + XP
+Total XP = (Noms Bonus * XP Weekly) + Total XP
