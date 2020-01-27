@@ -49,7 +49,9 @@
 
 &CMD`JUTSUAPP #1215=$+app/jutsu *=*:@break [match([v(list`JutsuApps)], %#)]={@pemit %#=[prompt(game)] You already have a Jutsu Application in the queue. Please wait up to 48 hours after submission before contacting staff.}; @assert [setr(0, [match([v(list`Jutsu-AppFields)], %0*, |)])]={@pemit %#=[prompt(app)] [ansi(hy, %0)] is not a valid Jutsu App Field.}; @assert [t(%1)]={@pemit %#={[prompt(app)] The [elementsmux([v(list`jutsu-appfields)], %q0, |)] field has been reset.}; @set %#=dat`jutsuapp:[replace([get(%#/dat`jutsuapp)], %q0,,|)]}; @include #1215/fn`[elements([v(list`jutsu-appFuncs)], %q0, |)]=%#, [trim([securex(%1, a %(%)%%%,;)])], %#
 
-@@ Jutsu App Submit Command TODO!!!
+&CMD`JUTSUAPPSUBMIT #1215=$+App/Jutsu Submit:@break [match([v(list`JutsuApps)], %#)]={@pemit %#=[prompt(game)] You already have a Jutsu Application in the queue. Please wait up to 48 hours after submission before contacting staff.}; @assert [land([iter([v(list`jutsu-required)], [t([elementsmux([get(%#/dat`jutsuapp)], ##, |)])])])]={@pemit %#=[prompt(app)] Please fill in all the necessary Jutsu App Fields.}; @break [strmatch(Tester, [get(%#/dat`NPC)])]={@eval [if([t([setr(3, [sqlite_query(Game, select ID from Templates where [iter([get(#1215/list`jutsu-sql)], ##="[elementsmux([get(%#/dat`jutsuapp)], [elementsmux([get(#1215/list`jutsu-sqlcols)], #@)], |)]",, %band%b)])])])],, [setq(4, {insert into Templates [chr(40)][iter(ID [get(#1215/list`jutsu-sql)] KP XP Stamina Chakra AP, ##,,[chr(44)])][chr(41)] values[chr(40)][u(#1215/dat`next_id)][chr(44)] [iter([get(#1215/list`jutsu-sqlcols)], "[elementsmux([get(%#/dat`jutsuapp)], ##, |)]",,[chr(44)])][chr(44)] [u(fn`jutsukpcost, %#)][chr(44)] [u(fn`JutsuXPCost, %#)][chr(44)] [u(#1215/fn`jutsustaminacost, %#)][chr(44)] [u(#1215/fn`jutsuchakracost, %#)][chr(44)] [u(#1215/fn`jutsuapcost, %#)][chr(41)]})][sqlite_query(Game, %q4)])]; @set %#=dat`JutsuAttributes`[edit([elementsmux([get(%#/dat`jutsuapp)], 1, |)], %b, -)]:1|1|1|1|1|1|[if([t(%q3)], %q3, [v(dat`next_id)])]|[iter(1 10 5 11 12, [elementsmux([get(%#/dat`jutsuapp)], ##, |)],,|)]|%N|1|0; @cemit monitor-app={The jutsu "[elements(get(%#/dat`jutsuapp),1,|)]" ([if(%q3, %q3, [get(#1215/dat`next_id)])]) has been created for Tester Bit [ansi(hm, %K)]}; @skip/ifelse [!t(%q3)]={@set #1215=dat`next_ID:[inc([get(#1215/dat`next_ID)])]}; @pemit %#=[prompt(App)] You have created the "[elements(get(%#/dat`jutsuapp),1,|)]" Jutsu.}; @assert [or([gte([get(%#/dat`KP)], [setr(1, [if([hasattr(%#/dat`NPC)], 0, [u(fn`jutsukpcost, %#)])])])], [hasattr(%#/dat`KP-jutsu)])]={@pemit %#=[prompt(app)] You do not have enough KP to make this jutsu.}; @pemit %#={[prompt(app)] You have submitted your jutsu for approval. Please wait at least 72 hours before sending an inquiry.}; @eval [if([hasattr(%#/dat`KP-jutsu)], [if([!eq([get(%#/dat`KP-jutsu)], %q1)], [set(%#, dat`KP:[add([get(%#/dat`KP)], [get(%#/dat`KP-jutsu)], [mul(-1, %q1)])])][set(%#, dat`KP-jutsu:%q1)])], [set(%#, dat`KP:[sub([get(%#/dat`KP)], %q1)])][set(%#, dat`KP-jutsu:%q1)])][set(me, list`jutsuapps:[get(#1215/List`JutsuApps)] %#)]; @cemit Monitor-App=[ansi(hy, %n)] has submitted a jutsu for approval.
+
+	&LIST`JUTSU-REQUIRED #1215=1 2 3 4 5 6 8 9
 
 	&LIST`JUTSU-APPFIELDS #1215=Name|Access|Category|Archetype|Type|Method|Special Actions|Rank|Description|Alt Name|Prefix|Notes
 
@@ -237,7 +239,6 @@
 
 	&FN`JUTSUXPCOST #1215=[round(mul([elementsmux([get(#254/dat`JutsuRanks`costs)], [match([get(#254/Dat`JutsuRanks)], [elementsmux([get(%0/dat`jutsuapp)], 8, |)],|)],|)], [add(1,mul([words([elementsmux(get(%0/dat`jutsuapp),7,|)],~)],.2))]),-1)]
 
-<<<<<<< HEAD
 	@@ XP Discounted: Base * (Affinity Discount (.75) - ET Discount (.05/.15/.25))
 
 	&FN`JUTSUXPCOST_DISCOUNTED #1215=[floor(mul([u(fn`jutsuXPCost, %0)], [sub(switch(1,[and([match(get(%0/Dat`AffinityList),[extract(get(%0/dat`jutsuapp),5,1,|)],|)],[match(Ninjutsu|Nintaijutsu,[extract(get(%0/dat`jutsuapp),4,1,|)],|)])],.75,[and([match(get(%0/Dat`AffinityList),Yang,|)],[match(Taijutsu|Bukijutsu|Chakra Flow Taijutsu|Chakra Flow Bukijutsu,[extract(get(%0/dat`jutsuapp),4,1,|)],|)])],.75,[and([match(get(%0/Dat`AffinityList),Yin,|)],[match(Seals|Calligraphy,[extract(get(%0/dat`jutsuapp),4,1,|)],|)])],.75,1), [switch([after(grab([get(%0/dat`ExpertiseList)], Elite Tradition*, |), ^)], 0, .05, 1, .15, 2, .25, 0)])]))]
@@ -253,20 +254,6 @@
 	&FN`JUTSUSTAMINACOST #1215=[ceil(mul(elementsmux(get(#254/Dat`[edit([elementsmux(get(%0/dat`jutsuapp),4,|)], %b, -)]`Stamina),[match(get(#254/dat`JutsuRanks),[elementsmux([get(%0/dat`jutsuapp)], 8, |)],|)],|),add(1,mul([words([extract(get(%0/dat`jutsuapp),7,1,|)],~)],.1))))]
 	
 	&FN`JUTSUCHAKRACOST #1215=[ceil(mul(elementsmux(get(#254/Dat`[edit([elementsmux(get(%0/dat`jutsuapp),4,|)], %b, -)]`Chakra),[match(get(#254/dat`JutsuRanks),[elementsmux([get(%0/dat`jutsuapp)], 8, |)],|)],|),add(1,mul([words([extract(get(%0/dat`jutsuapp),7,1,|)],~)],.1))))]	
-=======
-	&FN`JUTSUKPCOST #1215=[elements([v(list`KP-jutsu)], [match([u(#244/dat`ranks)], [elementsmux([get(%0/dat`jutsuapp)], 9, |)], |)], |)]
-
-	&FN`JUTSUKPCOST_DISCOUNTED #1215=[max(1, [sub([elements([v(list`KP-jutsu)], [match([u(#244/dat`ranks)], [elementsmux([get(%0/dat`jutsuapp)], 9, |)], |)], |)], [after(elements(get(%0/Dat`ExpertiseList),[match(get(%0/Dat`ExpertiseList),Elite Tradition*,|)],|),^)])])]
-
-		&LIST`KP-JUTSU #1215=2|3|4|6|7|8
-
-	&FN`JUTSUAPCOST #1215=[if([match(Attack|Heal,[elementsmux([get(%0/dat`jutsuapp)],6,|)],|)], [elementsmux(get(#254/Dat`[elementsmux(get(%0/dat`jutsuapp),3,|)]`AP),[match(get(#254/dat`JutsuRanks),[elementsmux([get(%0/dat`jutsuapp)], 9, |)],|)],|)],0)]
-
-	&FN`JUTSUSTAMINACOST #1215=[ceil(mul(extract(get(#254/Dat`[edit(extract(get(%0/dat`jutsuapp),4,1,|),%b,-)]`Stamina),[match(get(#254/dat`JutsuRanks),[elementsmux([get(%0/dat`jutsuapp)], 9, |)],|)],1,|),add(1,mul([words([extract(get(%0/dat`jutsuapp),7,1,|)],~)],.1))))]
-
-	&FN`JUTSUCHAKRACOST #1215=[ceil(mul(extract(get(#254/Dat`[edit(extract(get(%0/dat`jutsuapp),4,1,|),%b,-)]`Chakra),[match(get(#254/dat`JutsuRanks),[elementsmux([get(%0/dat`jutsuapp)], 9, |)],|)],1,|), add(1,mul([words([extract(get(%0/dat`jutsuapp),7,1,|)],~)],.1))))]
-
->>>>>>> 4e7b069a3d8eb6b483d752999dba576975a06667
 
 -------------------------[ Jutsu Apps - Staff Side ]-------------------------
 
