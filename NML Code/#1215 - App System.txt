@@ -218,7 +218,7 @@
 
 @@ Special Actions - Archetype Limits:
 
-	&LIST`SPECS`TAIJUTSU #1215=Targeted|Powerful|Disrupt|Flurry|DoT|Feint|Counter|Clash|Block|Evade|Avoid|Collab
+	&LIST`SPECS`TAIJUTSU #1215=Targeted|Powerful|Disrupt|Flurry|DoT|Feint|Counter|Clash|Turtle|Block|Evade|Avoid|Collab
 
 	&LIST`SPECS`BUKIJUTSU #1215=Targeted|Powerful|Disrupt|Flurry|DoT|Feint|Counter|Clash|Turtle|Block|Collab
 
@@ -249,16 +249,16 @@
 	&FN`JUTSUXPCOST_DISCOUNTED #1215=[floor(mul([u(fn`jutsuXPCost, %0)], [sub(switch(1,[and([match(get(%0/Dat`AffinityList),[extract(get(%0/dat`jutsuapp),5,1,|)],|)],[match(Ninjutsu|Nintaijutsu,[extract(get(%0/dat`jutsuapp),4,1,|)],|)])],.75,[and([match(get(%0/Dat`AffinityList),Yang,|)],[match(Taijutsu|Bukijutsu|Chakra Flow Taijutsu|Chakra Flow Bukijutsu,[extract(get(%0/dat`jutsuapp),4,1,|)],|)])],.75,[and([match(get(%0/Dat`AffinityList),Yin,|)],[match(Seals|Calligraphy,[extract(get(%0/dat`jutsuapp),4,1,|)],|)])],.75,1), [switch([after(grab([get(%0/dat`ExpertiseList)], Elite Tradition*, |), ^)], 0, .05, 1, .15, 2, .25, 0)])]))]
 
 	&FN`JUTSUKPCOST #1215=[elementsmux([v(list`KP-jutsu)], [match([u(#244/dat`ranks)], [elementsmux([get(%0/dat`jutsuapp)], 8, |)], |)], |)]
-	
+
 	&FN`JUTSUKPCOST_DISCOUNTED #1215=[max(1, [sub([u(fn`jutsuKPCost, %0)], [after(elementsmux(get(%0/Dat`ExpertiseList),[match(get(%0/Dat`ExpertiseList),Elite Tradition*,|)],|),^)])])]
 
 		&LIST`KP-JUTSU #1215=2|3|4|6|7|8
 
 	&FN`JUTSUAPCOST #1215=[if([match(Attack, [elementsmux([get(%0/dat`jutsuapp)],6,|)])], [elementsmux(get(#254/Dat`[elementsmux(get(%0/dat`jutsuapp),3,|)]`AP),[match(get(#254/dat`JutsuRanks),[elementsmux([get(%0/dat`jutsuapp)], 8, |)],|)],|)],0)]
-	
+
 	&FN`JUTSUSTAMINACOST #1215=[ceil(mul(elementsmux(get(#254/Dat`[edit([elementsmux(get(%0/dat`jutsuapp),4,|)], %b, -)]`Stamina),[match(get(#254/dat`JutsuRanks),[elementsmux([get(%0/dat`jutsuapp)], 8, |)],|)],|),add(1,mul([words([extract(get(%0/dat`jutsuapp),7,1,|)],~)],.1))))]
-	
-	&FN`JUTSUCHAKRACOST #1215=[ceil(mul(elementsmux(get(#254/Dat`[edit([elementsmux(get(%0/dat`jutsuapp),4,|)], %b, -)]`Chakra),[match(get(#254/dat`JutsuRanks),[elementsmux([get(%0/dat`jutsuapp)], 8, |)],|)],|),add(1,mul([words([extract(get(%0/dat`jutsuapp),7,1,|)],~)],.1))))]	
+
+	&FN`JUTSUCHAKRACOST #1215=[ceil(mul(elementsmux(get(#254/Dat`[edit([elementsmux(get(%0/dat`jutsuapp),4,|)], %b, -)]`Chakra),[match(get(#254/dat`JutsuRanks),[elementsmux([get(%0/dat`jutsuapp)], 8, |)],|)],|),add(1,mul([words([extract(get(%0/dat`jutsuapp),7,1,|)],~)],.1))))]
 
 -------------------------[ Jutsu Apps - Staff Side ]-------------------------
 
