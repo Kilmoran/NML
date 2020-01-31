@@ -58,19 +58,36 @@ Total XP = (Noms Bonus * XP Weekly) + Total XP
 
 
 
-
 &nom_bonus #121=.05
 
 Step 6: Account-wide XP
 The next step should be making XP account-wide. +noms should still be calculating on each character, but then that total XP should go into an account-wide pool. I can't recall if XP is given out once a day or once a week, but that will likely need to be taken into account. When it comes to NPCs, the XP they earn should go onto their Account, but not XP given for purchasing stuff. At about the same time, all purchasing code needs to be adjusted to buy from the account-wide XP pool. Mission code will also need to be adjusted.
   
-th sqlite_query(Game, alter table Accounts add column "Total XP" integer default=0)
-th sqlite_query(Game, alter table Accounts add column "XP" integer default=0)
 
-&FN`XP-PAYOUT #121=[setq(+, [iter([searchng(type=player)], [if([hasattr(##, dat`xp-gained)], ##)])], players)][iter([r(players)], [setq(1, [sqlite_query(Game, select XP%, "XP Lifetime" from Accounts where Email="[get(%i0/dat`account)]")])][sqlite_query(Game, update Accounts set XP=[add([first(%q1, |)], [get(%i0/dat`xp-gained)])]%, "XP Lifetime"=[add([rest(%q1, |)], [get(%i0/dat`xp-gained)])])][set(%i0,Dat`XP-weekly:[add(get(%i0/Dat`xp-weekly),[get(%i0/dat`xp-gained)])])][set(%i0,Dat`XP-lifetime:[add(get(%i0/Dat`xp-lifetime),[get(%i0/dat`xp-gained)])])][wipe(%i0/dat`xp-gained)][if([gte([get(%i0/dat`XP-lifetime)], 10000)], [settag(%i0, !newplayer)])])]
+&FN`XP-PAYOUT #121=[setq(+, [iter([searchng(type=player)], [if([hasattr(##, dat`xp-gained)], ##)])], players)][iter([r(players)], [setq(1, [sqlite_query(Game, select XP%, "Total XP" from Accounts where Email="[get(%i0/dat`account)]")])][sqlite_query(Game, update Accounts set XP=[add([first(%q1, |)], [get(%i0/dat`xp-gained)])]%, "Total XP"=[add([rest(%q1, |)], [get(%i0/dat`xp-gained)])])][set(%i0,dat`XP:[add(get(%i0/dat`xp),[get(%i0/dat`xp-gained)])])][set(%i0,dat`XP-weekly:[add(get(%i0/dat`xp-weekly),[get(%i0/dat`xp-gained)])])][set(%i0,Dat`XP-lifetime:[add(get(%i0/Dat`xp-lifetime),[get(%i0/dat`xp-gained)])])][wipe(%i0/dat`xp-gained)][if([gte([get(%i0/dat`XP-lifetime)], 10000)], [settag(%i0, !newplayer)])])]
 
 
+@dolist/inline/delim ^ [sqlite_query(Game, select Email from Accounts)]=th [sqlite_query(Game, update Accounts set "Total XP"=[ladd([iter([sqlite_query(Game, select Approved from Accounts where Email='%d0')], [get(%i0/dat`XP-lifetime)])] [mul(500, [sqlite_query(Game, select "LP Total" from Accounts where Email='%d0')])])] where Email='%d0')]
 
+@dolist/inline/delim ^ [sqlite_query(Game, select Email from Accounts)]=th [sqlite_query(Game, update Accounts set XP=[ladd([mul(500, [sqlite_query(Game, select LP from Accounts where Email='%d0')])] [iter([sqlite_query(Game, select Approved from Accounts where Email='%d0')], [get(%i0/dat`XP)])])] where Email='%d0')]
+
+&CMD`STAFF-XP #1223=$+XP *:@break [or([gte([bittype(%#)], 5)],[hasslabs(%#,staff-skill)])]={@skip/ifelse [t([setr(0, [pmatch(%0)])])]={@pemit %#=[Setq(5,[ladd(elements(u(#121/list`xp-num-mods), parse(u(%q0/dat`xp-gauge), match([u(#121/list`xp-named-mods)], ##))))])][printf($^69:[ansi(hb, -=)]:s, < [ansi(hw, [cname(%q0)]'s Experience Points)] >)]%r[printf($1:[ansi(hb, |)]:&s $15-&s $15&s $1:|:&s $15&-s $15&s $1:[ansi(hb, |)]:&s, %r, Available XP:%rAvailable KP:%rGained XP:, [sqlite_query(Game, select XP from Accounts where Email='[get(%q0/dat`Account)]')]%r[get(%q0/dat`kp)]%r[if([hastags(%q0, watching)], [ansi(hc, *)]%b)][get(%q0/dat`xp-gained)],%r%r, Weekly XP:%rLifetime XP:, [get(%q0/dat`xp-weekly)]%r[get(%q0/dat`xp-lifetime)],%r%r)]%r[printf([ansi(hb, |)]$67:-:s[ansi(hb, |)],)]%r[printf($1:[ansi(hb, |)]:&s $-65&s $1:[ansi(hb, |)]:&s,%r, XP Gauge: [if([t(%q5)], %q5, 0)], %r)]%r[printf($1:[ansi(hb, |)]:&s $13s $-51"|"s $1:[ansi(hb, |)]:&s,%r, XP Modifiers:, [Get(%q0/Dat`Xp-Gauge)],%r)]%r[printf($^69:[ansi(hb, -=)]:s, < [ansi(hw, End XP)] >)]}, @pemit %#=[prompt(game)] Enter a valid player.};@pemit %#=Huh? %b(Type "help" for help.)
+
+&CMD`XP #60=$+XP:@pemit %#=[printf($^69:[ansi(hb, -=)]:s, < [ansi(hw, %k's Experience Points)] >)]%r[printf($1:[ansi(hb, |)]:&s $15-&s $15&s $1:|:&s $15&-s $15&s $1:[ansi(hb, |)]:&s,%r, Available XP:%rAvailable KP:, [sqlite_query(Game, select XP from Accounts where Email='[get(%#/dat`Account)]')]%r[get(%#/dat`kp)],%r, Weekly RP XP:%rLifetime RP XP:, [get(%#/dat`xp-weekly)]%r[get(%#/dat`xp-lifetime)],%r)]%r[printf($^69:[ansi(hb, -=)]:s, < [ansi(hw, End XP)] >)]
+
+&CMD`+ACCOUNT #60=$+account:@break [hasattr(%#, dat`account)]={@pemit %#=[printf($78:[ansi(hb, -=)]:^s, < [ansi(hw, %K's Account Info)] >)]%r[printf($1&:[ansi(hb, |)]:s $74^s $1&:[ansi(hb, |)]:s,,Email: [decode64([get(%#/dat`account)])],)]%r[printf($1&:[ansi(hb,|)]:s $51-&s $1&:[ansi(hb,|)]:s $20&s $1&:[ansi(hb,|)]:s,%r%r,Approved: [elist([sqlite_query(Game, select Approved from Accounts where Email='[get(%#/dat`account)]')],,,,,[ansi(y, [name(%0)])])]%rUnapproved: [elist([sqlite_query(Game, select Unapproved from Accounts where Email='[get(%#/dat`account)]')],,,,,[ansi(y, [name(%0)])])]%rNPCs: [elist([sqlite_query(Game, select "Approved NPCs" from Accounts where Email='[get(%#/dat`account)]')],,,,,[ansi(y, [name(%0)])])],%r%r, XP: [sqlite_query(Game, select XP from Accounts where Email='[get(%#/dat`Account)]')]%rLP: [sqlite_query(Game, select LP from Accounts where Email='[get(%#/dat`account)]')]/[sqlite_query(Game, select "LP Total" from Accounts where Email='[get(%#/dat`account)]')]%rTotal XP: [sqlite_query(Game, select "Total XP" from Accounts where Email='[get(%#/dat`Account)]')],%r%r)]%r[printf($^78:[ansi(hb, -=)]:s, < [ansi(hw, End Account Info)] >)]};@pemit %#=[prompt(CG)] You don't have an account yet.
+
+&CMD`+ACCOUNT #1223=$+account *:@assert [gte([bittype(%#)], 5)]={;@pemit %#=[error()]}; @assert [t([setr(0, [pmatch(%0)])])]={@pemit %#=[prompt(game)] Invalid player.}; @assert [hasattr(%q0, dat`account)]={@pemit %#=[prompt(game)] They don't have an account yet.}; @pemit %#=[printf($78:[ansi(hb, -=)]:^s, < [ansi(hw, [cname(%q0)]'s Account Info)] >)]%r[printf($1&:[ansi(hb,|)]:s $51-&s $1&:[ansi(hb,|)]:s $20&s $1&:[ansi(hb,|)]:s,%r%r,Approved: [elist([sqlite_query(Game, select Approved from Accounts where Email='[get(%q0/dat`account)]')],,,,,[ansi(y, [name(%0)])])]%rUnapproved: [elist([sqlite_query(Game, select Unapproved from Accounts where Email='[get(%q0/dat`account)]')],,,,,[ansi(y, [name(%0)])])]%rNPCs: [elist([sqlite_query(Game, select "Approved NPCs" from Accounts where Email='[get(%q0/dat`account)]')],,,,,[ansi(y, [name(%0)])])],%r%r, XP: [sqlite_query(Game, select XP from Accounts where Email='[get(%q0/dat`Account)]')]%rLP: [sqlite_query(Game, select LP from Accounts where Email='[get(%q0/dat`account)]')]/[sqlite_query(Game, select "LP Total" from Accounts where Email='[get(%q0/dat`account)]')]%rTotal XP: [sqlite_query(Game, select "Total XP" from Accounts where Email='[get(%q0/dat`Account)]')],%r%r)]%r[printf($^78:[ansi(hb, -=)]:s, < [ansi(hw, End Account Info)] >)]
+
+
+
+Old:
+&CMD`STAFF-XP #1223=$+xp *:@break [or([gte([bittype(%#)], 5)],[hasslabs(%#,staff-skill)])]={@skip/ifelse [t([setr(0, [pmatch(%0)])])]={@pemit %#=[Setq(5,[ladd(elements(u(#121/list`xp-num-mods), parse(u(%q0/dat`xp-gauge), match([u(#121/list`xp-named-mods)], ##))))])][printf($^69:[ansi(hb, -=)]:s, < [ansi(hw, [cname(%q0)]'s Experience Points)] >)]%r[printf($1:[ansi(hb, |)]:&s $15-&s $15&s $1:|:&s $15&-s $15&s $1:[ansi(hb, |)]:&s, %r, Available XP:%rAvailable KP:%rGained XP:%rTrained XP:, [get(%q0/dat`xp)]%r[get(%q0/dat`kp)]%r[if([hastags(%q0, watching)], [ansi(hc, *)]%b)][get(%q0/dat`xp-gained)]%r [get(%q0/dat`XP-trained)],%r%r, Weekly XP:%rLifetime XP:%rConverted XP:, [get(%q0/dat`xp-weekly)]%r[get(%q0/dat`xp-lifetime)]%r[mul([get(%q0/dat`LP-converted)], 500)],%r%r)]%r[printf([ansi(hb, |)]$67:-:s[ansi(hb, |)],)]%r[printf($1:[ansi(hb, |)]:&s $-65&s $1:[ansi(hb, |)]:&s,%r, XP Gauge: [if([t(%q5)], %q5, 0)], %r)]%r[printf($1:[ansi(hb, |)]:&s $13s $-51"|"s $1:[ansi(hb, |)]:&s,%r, XP Modifiers:, [Get(%q0/Dat`Xp-Gauge)],%r)]%r[printf($^69:[ansi(hb, -=)]:s, < [ansi(hw, End XP)] >)]}, @pemit %#=[prompt(game)] Enter a valid player.};@pemit %#=Huh? %b(Type "help" for help.)
+
+&CMD`+ACCOUNT #60=$+account:@break [hasattr(%#, dat`account)]={@pemit %#=[printf($78:[ansi(hb, -=)]:^s, < [ansi(hw, %K's Account Info)] >)]%r[printf($1&:[ansi(hb, |)]:s $74^s $1&:[ansi(hb, |)]:s,,Email: [decode64([get(%#/dat`account)])],)]%r[printf($1&:[ansi(hb,|)]:s $51-&s $1&:[ansi(hb,|)]:s $20&s $1&:[ansi(hb,|)]:s,%r%r,Approved: [elist([sqlite_query(Game, select Approved from Accounts where Email='[get(%#/dat`account)]')],,,,,[ansi(y, [name(%0)])])]%rUnapproved: [elist([sqlite_query(Game, select Unapproved from Accounts where Email='[get(%#/dat`account)]')],,,,,[ansi(y, [name(%0)])])]%rNPCs: [elist([sqlite_query(Game, select "Approved NPCs" from Accounts where Email='[get(%#/dat`account)]')],,,,,[ansi(y, [name(%0)])])],%r%r, %rLP: [sqlite_query(Game, select LP from Accounts where Email='[get(%#/dat`account)]')]/[sqlite_query(Game, select "LP Total" from Accounts where Email='[get(%#/dat`account)]')],%r%r)]%r[printf($^78:[ansi(hb, -=)]:s, < [ansi(hw, End Account Info)] >)]};@pemit %#=[prompt(CG)] You don't have an account yet.
+
+
+&CMD`XP #60=$+xp:@pemit %#=[printf($^69:[ansi(hb, -=)]:s, < [ansi(hw, %k's Experience Points)] >)]%r[printf($1:[ansi(hb, |)]:&s $15-&s $15&s $1:|:&s $15&-s $15&s $1:[ansi(hb, |)]:&s,%r, Available XP:%rAvailable KP:%rTraining XP:, [get(%#/dat`xp)]%r[get(%#/dat`kp)]%r[get(%#/dat`xp-trained)],%r, Weekly RP XP:%rLifetime RP XP:%rConverted XP:, [get(%#/dat`xp-weekly)]%r[get(%#/dat`xp-lifetime)]%r[mul([get(%#/dat`LP-converted)], 500)],%r)]%r[printf($^69:[ansi(hb, -=)]:s, < [ansi(hw, End XP)] >)]
 
  @@ XP|XP Lifetime
 
@@ -88,6 +105,10 @@ XP in account upon CG Completion: XP + CGXP
 XP in account upon Re-CG: XP - CGXP
 XP on char upon Re-CG: full CGXP, same lifetime, same Unspent
 XP in Account upon ReCG Approval: XP + CGXP + XP Spent
+
+
+
+
 
 
 Noms Adjustment:
