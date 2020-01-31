@@ -20,7 +20,7 @@ th sqlite_query(Game, alter table Accounts add column "Noms" integer default=5)
 
 
 @@ +nom <Player> - Gives a +nom to a player
-&cmd`nom #60=$+nom *:@assert [t([setr(0, [pmatch([secure(%0)])])])]={@pemit %#=[prompt(Game)] That is not a valid player to nominate.}; @assert [gt([sqlite_query(Game, select Noms from Accounts where Email="[get(%#/dat`account)]")], 0)]={@pemit %#=[prompt(Game)] You do not have any +noms to give.}; @assert [lt([get(%q0/dat`noms)], 20)]={@pemit %#=[prompt(game)] [ansi(y, [name(%q0)])] cannot receive any more +noms.}; @set %q0=dat`noms:[inc([get(%q0/dat`noms)])]; @pemit %#={[prompt(Game)] You have +nom'd [ansi(y, [name(%q0)])]!}]
+&cmd`nom #60=$+nom *:@assert [t([setr(0, [pmatch([secure(%0)])])])]={@pemit %#=[prompt(Game)] That is not a valid player to nominate.}; @break [strmatch(%q0, %#)]={@pemit %#=[prompt(Game)] You cannot nominate yourself.}; @break [match(#658 #2681, [parent(%l)])]={@pemit %#=[prompt(Game)] You cannot be in CG to use this command.}; @break [match(#658 #2681, [parent([loc(%q0)])])]={@pemit %#=[prompt(Game)] You cannot nominate someone in CG.}; @assert [gt([sqlite_query(Game, select Noms from Accounts where Email="[get(%#/dat`account)]")], 0)]={@pemit %#=[prompt(Game)] You do not have any +noms to give.}; @assert [lt([get(%q0/dat`noms)], 20)]={@pemit %#=[prompt(game)] [ansi(y, [name(%q0)])] cannot receive any more +noms.}; @set %q0=dat`noms:[inc([get(%q0/dat`noms)])]; @pemit %#={[prompt(Game)] You have +nom'd [ansi(y, [name(%q0)])]!}]
 
 @@ Remove
 &FN`LP-GAIN #121=[iter([sqlite_query(Game, select Email from Accounts)], sqlite_query(Game, update Accounts Set LP=[add([sqlite_query(Game, select LP from Accounts where Email='%i0')], [setr(+, [gte([ladd([iter([sqlite_query(Game, select Approved%, "Approved NPCs" from Accounts where Email='%i0',%b)], [default(%i0/dat`xp-weekly, 0)][set(%i0, dat`xp-weekly:0)])])], 500)], bool)])]%, "LP Total"=[add([sqlite_query(Game, select "LP Total" from Accounts where Email='%i0')], %q<bool>)] where Email="%i0"),^)]
@@ -31,8 +31,8 @@ th sqlite_query(Game, alter table Accounts add column "Noms" integer default=5)
 
 Iterate Through all Accounts:
 	* Set "Noms Weekly" to 0
+	* Grab "XP", "XP Total", "Noms Earned", "Noms Weekly"
 	For Each Character:
-		* Grab "XP", "XP Total", "Noms Earned", "Noms Weekly"
 		* Add dat`noms to "Noms Earned"
 		* Add dat`noms to "Noms Weekly"
 		* Reset dat`noms and "Noms"
