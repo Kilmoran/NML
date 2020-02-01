@@ -72,7 +72,7 @@
 
 &FN`ACCESS #1215=@assert match([v(list`access)], %1)={@pemit %2=[prompt(App)] [ansi(hy, %1)] is not a proper Access selection try [elist([v(list`access)], or,,,,[ansi(y, %0)])] instead.}; @break [and([strmatch(%1, clan)], [strmatch([get(%0/dat`clan)], None)])]={@pemit %2=[prompt(app)] You do not have a Clan. Please select [elist([remove([v(list`access)], Clan)], or,,,,[ansi(y, %0)])] instead.}; @set %0=dat`jutsuapp:[replace(get(%0/dat`jutsuapp),2,[if([strmatch(%1, clan)], [get(%0/dat`clan)], [grab([v(list`access)], %1)])],|)]; @pemit %2=[prompt(App)] The Access selection of the [ansi(0xd0, [elementsmux([get(%0/dat`jutsuapp)], 1, |)])] jutsu is now [ansi(y, [elementsmux([get(%0/dat`jutsuapp)], 2, |)])].
 
-	&LIST`ACCESS #1215=General Clan Hiden
+	&LIST`ACCESS #1215=General Clan
 
 &FN`CATEGORY #1215=@assert [t([setr(0, [grab([v(list`category)], %1*)])])]={@pemit %2=[prompt(app)] Please select either [elist([v(list`category)],or,,,,[ansi(y, %0)])].}; @assert [lor([iter([v(list`cat-%q0)], [match([get(%0/dat`expertiseList)], ##*, |)], |)])]={@pemit %2=[prompt(app)] The specialties possessed do not allow for the [ansi(y, %q0)] Category on this jutsu.}; @set %0=dat`jutsuApp:[replace([get(%0/dat`JutsuApp)], 4 5 7,,|)]; @set %0=dat`JutsuApp:[replace([get(%0/dat`JutsuApp)], 3, %q0, |)]; @pemit %2=[prompt(App)] The Category of the [ansi(0xd0, [elementsmux([get(%0/dat`jutsuapp)], 1, |)])] jutsu is now [ansi(y, [elementsmux([get(%0/dat`jutsuapp)], 3, |)])].
 
