@@ -246,7 +246,9 @@
 
 	@@ XP Discounted: Base * (Affinity Discount (.75) - ET Discount (.05/.15/.25))
 
-	&FN`JUTSUXPCOST_DISCOUNTED #1215=[floor(mul([u(fn`jutsuXPCost, %0)], [sub(switch(1,[and([match(get(%0/Dat`AffinityList),[extract(get(%0/dat`jutsuapp),5,1,|)],|)],[match(Ninjutsu|Nintaijutsu,[extract(get(%0/dat`jutsuapp),4,1,|)],|)])],.75,[and([match(get(%0/Dat`AffinityList),Yang,|)],[match(Taijutsu|Bukijutsu|Chakra Flow Taijutsu|Chakra Flow Bukijutsu,[extract(get(%0/dat`jutsuapp),4,1,|)],|)])],.75,[and([match(get(%0/Dat`AffinityList),Yin,|)],[match(Seals|Calligraphy,[extract(get(%0/dat`jutsuapp),4,1,|)],|)])],.75,1), [switch([after(grab([get(%0/dat`ExpertiseList)], Elite Tradition*, |), ^)], 0, .05, 1, .15, 2, .25, 0)])]))]
+	&FN`JUTSUXPCOST_DISCOUNTED #1215=[floor(mul([u(fn`jutsuXPCost, %0)], [sub(switch(1,[and([match(get(%0/Dat`AffinityList),[extract(get(%0/dat`jutsuapp),5,1,|)],|)],[match(Ninjutsu|Nintaijutsu,[extract(get(%0/dat`jutsuapp),4,1,|)],|)])],.75,[and([match(get(%0/Dat`AffinityList),Yang,|)],[match(Taijutsu|Bukijutsu|Chakra Flow Taijutsu|Chakra Flow Bukijutsu,[extract(get(%0/dat`jutsuapp),4,1,|)],|)])],.75,[and([match(get(%0/Dat`AffinityList),Yin,|)],[match(Seals|Calligraphy,[extract(get(%0/dat`jutsuapp),4,1,|)],|)])],.75,1), [if([!match([v(list`elite-clans)], [get(%0/dat`clan)])], [switch([after(grab([get(%0/dat`ExpertiseList)], Elite Tradition*, |), ^)], 0, .05, 1, .15, 2, .25, 0)])])]))]
+
+	&list`elite-clans #1215=Oketsu On'you
 
 	&FN`JUTSUKPCOST #1215=[elementsmux([v(list`KP-jutsu)], [match([u(#244/dat`ranks)], [elementsmux([get(%0/dat`jutsuapp)], 8, |)], |)], |)]
 
